@@ -1,0 +1,1 @@
+{"name":"sober-leaderboard","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"netlify dev","build":"echo \"No build required\""},"dependencies":{"@netlify/database":"^1.0.0"},"devDependencies":{"netlify-cli":"^23.6.0"}}
