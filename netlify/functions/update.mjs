@@ -1,15 +1,32 @@
 import { db } from "./_db.mjs";
 
 export default async event => {
-  if (event.httpMethod !== "POST") {
-    return out(405, { error: "Method not allowed" });
+  if (event.method !== "POST") {
+    return new Response(
+      JSON.stringify({ error: "Method not allowed" }),
+      {
+        status: 405,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
   }
 
   let body;
+
   try {
-    body = JSON.parse(event.body || "{}");
+    body = await event.json();
   } catch {
-    return out(400, { error: "Invalid request" });
+    return new Response(
+      JSON.stringify({ error: "Invalid request" }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
   }
 
   const id = Number(body.id);
@@ -21,9 +38,17 @@ export default async event => {
     amount < 1 ||
     amount > 3650
   ) {
-    return out(400, {
-      error: "Enter a whole number from 1 to 3650."
-    });
+    return new Response(
+      JSON.stringify({
+        error: "Enter a whole number from 1 to 3650."
+      }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
   }
 
   const rows = await db.sql`
@@ -35,19 +60,29 @@ export default async event => {
   `;
 
   if (!rows.length) {
-    return out(404, { error: "Member not found" });
+    return new Response(
+      JSON.stringify({ error: "Member not found" }),
+      {
+        status: 404,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
   }
 
-  return out(200, { member: rows[0] });
+  return new Response(
+    JSON.stringify({
+      member: rows[0]
+    }),
+    {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
 };
-
-function out(status, body) {
-  return {
-    statusCode: status,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  };
-}
 
 export const config = {
   path: "/api/update"
