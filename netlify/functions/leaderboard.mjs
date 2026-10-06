@@ -7,16 +7,28 @@ export default async () => {
     ORDER BY sober_days DESC, name ASC
   `;
 
-  const total = members.reduce((sum, m) => sum + Number(m.sober_days), 0);
+  const total = members.reduce(
+    (sum, member) => sum + Number(member.sober_days),
+    0
+  );
+
   const average = members.length
     ? Math.round(total / members.length)
     : 0;
 
-  return {
-    statusCode: 200,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ members, total, average })
-  };
+  return new Response(
+    JSON.stringify({
+      members,
+      total,
+      average
+    }),
+    {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
 };
 
 export const config = {
